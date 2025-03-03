@@ -4,27 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h2>Login</h2>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Login</h2>
 
-    <% if (messages.error) { %>
-        <p style="color: red;"><%= messages.error %></p>
-    <% } %>
-    <% if (messages.success) { %>
-        <p style="color: green;"><%= messages.success %></p>
-    <% } %>
+        <% if (messages.error) { %>
+            <p class="text-red-500 text-center"><%= messages.error %></p>
+        <% } %>
+        <% if (messages.success) { %>
+            <p class="text-green-500 text-center"><%= messages.success %></p>
+        <% } %>
 
-    <form action="/login" method="POST">
-        <label>Username:</label>
-        <input type="text" name="username" required><br>
-        
-        <label>Password:</label>
-        <input type="password" name="password" required><br>
+        <form action="/login" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-gray-700">Username</label>
+                <input type="text" name="username" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+            </div>
+            
+            <div>
+                <label class="block text-gray-700">Password</label>
+                <input type="password" name="password" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+            </div>
 
-        <button type="submit">Login</button>
-    </form>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                Login
+            </button>
+        </form>
 
-    <p>Don't have an account? <a href="/register">Register here</a></p>
+        <p class="text-center mt-4 text-gray-600">
+            Don't have an account? <a href="/register" class="text-blue-500 hover:underline">Register here</a>
+        </p>
+    </div>
 </body>
 </html>
