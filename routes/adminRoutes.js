@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+
 // Middleware to check if user is logged in
 function isLoggedIn(req, res, next) {
   if (!req.session.user) {
@@ -9,6 +10,7 @@ function isLoggedIn(req, res, next) {
   }
   next();
 }
+
 // Middleware to check if user is an admin
 function isAdmin(req, res, next) {
   if (!req.session.user || req.session.user.role !== "admin") {
@@ -18,32 +20,18 @@ function isAdmin(req, res, next) {
   next();
 }
 
-router.get("/", (req, res) => {
-  res.render("index");
-});
-
-// Register Routes
-router.get("/register", (req, res) => {
-  res.render("register", { messages: req.flash() });
-});
+// Login & Registration Routes
+router.get("/register", (req, res) => res.render("register", { messages: req.flash() }));
 router.post("/register", userController.registerUser);
-
-// Login Routes
-router.get("/login", (req, res) => {
-  res.render("login", { messages: req.flash() });
-});
+router.get("/login", (req, res) => res.render("login", { messages: req.flash() }));
 router.post("/login", userController.loginUser);
-
-// Logout Route
 router.get("/logout", userController.logoutUser);
-router.get("/dashboard", (req, res) => {
-  if (!req.session.user) {
-    req.flash("error", "Please log in first.");
-    return res.redirect("/login");
-  }
 
+// User Dashboard
+router.get("/dashboard", isLoggedIn, (req, res) => {
   res.render("dashboard", { user: req.session.user });
 });
+
 // Admin Dashboard
 router.get("/admin/dashboard", isLoggedIn, isAdmin, (req, res) => {
   res.render("admin_dashboard", { user: req.session.user });

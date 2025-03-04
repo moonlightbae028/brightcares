@@ -37,17 +37,23 @@ exports.getUserByUsername = (username, callback) => {
   });
 };
 
+
 // Validate user login
 exports.validateUser = (username, password, callback) => {
-  exports.getUserByUsername(username, (err, user) => {
+  const sql = "SELECT * FROM users WHERE username = ?";
+  
+  db.query(sql, [username], async (err, results) => {
     if (err) return callback(err, null);
-    if (!user) return callback(null, null); // User not found
+    
+    if (results.length === 0) return callback(null, null);
 
-    // Compare passwords
-    bcrypt.compare(password, user.password, (err, isMatch) => {
-      if (err) return callback(err, null);
-      if (!isMatch) return callback(null, null); // Password incorrect
-      callback(null, user); // Successful login
-    });
+    const user = results[0];
+
+    // Check if the password is correct
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return callback(null, null);
+
+    // Return user details, including role
+    callback(null, user);
   });
 };

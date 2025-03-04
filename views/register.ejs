@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -18,19 +18,25 @@
             <p class="mb-4 text-sm text-green-500 bg-green-100 p-2 rounded-md"><%= messages.success %></p>
         <% } %>
 
-        <form action="/register" method="POST" class="space-y-4">
-            <input type="text" name="fname" placeholder="First Name" required
+        <form action="/register" method="POST" class="space-y-4" onsubmit="return validateForm()">
+            <input type="text" id="fname" name="fname" placeholder="First Name" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
             
-            <input type="text" name="lname" placeholder="Last Name" required
+            <input type="text" id="lname" name="lname" placeholder="Last Name" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
             
-            <input type="email" name="email" placeholder="Email" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
-            
-            <input type="text" name="contacts" placeholder="Contacts" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
-            
+            <div class="relative">
+                <input type="text" id="email" name="email" placeholder="Click to set Gmail"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    onclick="setGmail()">
+            </div>
+            <p id="emailError" class="text-red-500 text-sm hidden">Email must end with @gmail.com</p>
+
+            <input type="text" id="contacts" name="contacts" placeholder="Contacts (11 digits)" required maxlength="11"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                oninput="limitDigits(this)">
+            <p id="contactError" class="text-red-500 text-sm hidden">Contact number must be 11 digits</p>
+
             <select name="gender" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
                 <option value="">Select Gender</option>
@@ -38,13 +44,13 @@
                 <option value="Female">Female</option>
             </select>
             
-            <input type="text" name="address" placeholder="Address" required
+            <input type="text" id="address" name="address" placeholder="Address" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
             
-            <input type="text" name="username" placeholder="Username" required
+            <input type="text" id="username" name="username" placeholder="Username" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
             
-            <input type="password" name="password" placeholder="Password" required
+            <input type="password" id="password" name="password" placeholder="Password" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
 
             <button type="submit"
@@ -57,6 +63,34 @@
             Already have an account? <a href="/login" class="text-blue-500 hover:underline">Login here</a>
         </p>
     </div>
+
+    <script>
+        function validateForm() {
+            let email = document.getElementById("email").value;
+            let contacts = document.getElementById("contacts").value;
+            let emailError = document.getElementById("emailError");
+            let contactError = document.getElementById("contactError");
+
+            let emailValid = email.endsWith("@gmail.com");
+            let contactValid = /^\d{11}$/.test(contacts); // Exactly 11 digits
+
+            emailError.classList.toggle("hidden", emailValid);
+            contactError.classList.toggle("hidden", contactValid);
+
+            return emailValid && contactValid; // Prevent form submission if invalid
+        }
+
+        function limitDigits(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 11); // Allow only numbers, limit to 11 digits
+        }
+
+        function setGmail() {
+            let emailInput = document.getElementById("email");
+            if (!emailInput.value.includes("@gmail.com")) {
+                emailInput.value = emailInput.value + "@gmail.com";
+            }
+        }
+    </script>
 
 </body>
 </html>

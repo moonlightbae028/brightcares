@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>User Dashboard</title>
+    <title>Admin Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -50,21 +50,22 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>User Dashboard</h1>
+        <h1>Admin Dashboard</h1>
         <ul class="menu">
-            <li><a href="/dashboard">Home</a></li>
-            <li><a href="/schedule">Schedule</a></li>
+            <li><a href="/admin/dashboard">Home</a></li>
+            <li><a href="/admin/users">Users</a></li>
+            <li><a href="/admin/schedule">Schedule</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
 
     <div class="container">
-        <h2>Welcome, <%= user.fname %>!</h2>
+        <h2>Welcome Admin, <%= user.fname %>!</h2>
 
         <div class="schedule">
             <h3>Schedule</h3>
-            <button onclick="window.location.href='/schedule'">Add Schedule</button>
-
+            <p>No scheduled events yet.</p>
+            <button onclick="alert('Add Schedule Feature Coming Soon!')">Add Schedule</button>
         </div>
     </div>
 </body>

@@ -15,7 +15,7 @@ exports.registerUser = (req, res) => {
   });
 };
 
-// Handle user login
+// Handle user login with role checking
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
 
@@ -31,11 +31,26 @@ exports.loginUser = (req, res) => {
     }
 
     // Store user session
-    req.session.user = user;
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role, // Store role
+      fname: user.fname
+    };
+
+    console.log("User logged in:", req.session.user); // Debugging output
+
     req.flash("success", `Welcome, ${user.fname}!`);
-    res.redirect("/dashboard"); // Redirect to a dashboard or home page
+
+    // Redirect user based on role
+    if (user.role === "admin") {
+      return res.redirect("/admin/dashboard");
+    } else {
+      return res.redirect("/dashboard");
+    }
   });
 };
+
 
 // Logout function
 exports.logoutUser = (req, res) => {

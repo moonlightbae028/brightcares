@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Appointment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6">
+        <% if (messages.error) { %>
+            <div class="bg-red-500 text-white text-center py-2 px-4 rounded-md mb-4">
+            <%= messages.error %>
+            </div>
+        <% } %>
+        <% if (messages.success) { %>
+            <div class="bg-green-500 text-white text-center py-2 px-4 rounded-md mb-4">
+            <%= messages.success %>
+            </div>
+        <% } %>
+        <form action="/schedule/add" method="POST">
+            <p class="text-center mt-4 text-gray-600">
+                ↩ <a href="/dashboard" class="text-blue-500 hover:underline ">back</a>
+            </p>
+            <h2 class="text-2xl font-bold text-center text-gray-700 mb-4">Schedule Appointment</h2>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-600">First Name:</label>
+                    <input type="text" name="first_name" value="<%= user.fname %>" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600">
+                </div>
+                <div>
+                    <label class="block text-gray-600">Last Name:</label>
+                    <input type="text" name="last_name" value="<%= user.lname %>" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600">
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Contact:</label>
+                <input type="text" name="contact" value="<%= user.contacts %>" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600">
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Address:</label>
+                <textarea name="address" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 h-20"><%= user.address %></textarea>
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Appointment Date:</label>
+                <input type="date" name="appointment_date" id="appointment_date" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-blue-500" required>
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Appointment Time:</label>
+                <input type="time" name="appointment_time" id="appointment_time" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-blue-500" required>
+            </div>
+            
+            <div class="mt-3">
+                <label class="block text-gray-600">Brand:</label>
+                <input type="text" id="brand" name="brand" list="brandList" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-blue-500">
+                <datalist id="brandList"></datalist>
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Model:</label>
+                <input type="text" id="model" name="model" list="modelList" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-blue-500">
+                <datalist id="modelList"></datalist>
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Vehicle Type:</label>
+                <select name="vtype" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-blue-500">
+                    <option value="" disabled selected>Select Vehicle Type</option>
+                    <option value="4 Wheels">4 Wheels</option>
+                    <option value="3 Wheels">3 Wheels</option>
+                    <option value="2 Wheels">2 Wheels</option>
+                </select>
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Service Type:</label>
+                <select name="stype" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-blue-500">
+                    <option value="" disabled selected>Select Service Type</option>
+                    <option value="Pick Up">Pick Up</option>
+                    <option value="Home Service">Home Service</option>
+                </select>
+            </div>
+
+            <div class="mt-3">
+                <label class="block text-gray-600">Description:</label>
+                <select name="des" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-blue-500">
+                    <option value="Autotune">Autotune</option>
+                    <option value="Change Tires">Change Tires</option>
+                    <option value="Change Oil">Change Oil</option>
+                </select>
+            </div>
+
+            <button type="submit" 
+                class="w-full mt-4 bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition">
+                Submit
+            </button>
+
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let dateInput = document.getElementById("appointment_date");
+            let timeInput = document.getElementById("appointment_time");
+            let form = document.querySelector("form");
+        
+            // Set min date to today
+            let today = new Date().toISOString().split("T")[0];
+            dateInput.setAttribute("min", today);
+        
+            form.addEventListener("submit", function (event) {
+                // Prevent default submission
+                event.preventDefault();
+        
+                let date = dateInput.value;
+                let time = timeInput.value;
+        
+                if (!date || !time) {
+                    alert("Please select both date and time.");
+                    return;
+                }
+        
+                let combinedDateTime = `${date} ${time}:00`; // Combine date & time into correct format
+        
+                // Create hidden input to store formatted datetime
+                let hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "dCreated";
+                hiddenInput.value = combinedDateTime;
+        
+                form.appendChild(hiddenInput);
+                form.submit(); // Now submit the form with corrected data
+            });
+        
+            // Fetch brand and models
+            fetch('/schedule/getBrands')
+                .then(res => res.json())
+                .then(data => {
+                    let brandList = document.getElementById('brandList');
+                    data.forEach(brand => {
+                        let option = document.createElement('option');
+                        option.value = brand;
+                        brandList.appendChild(option);
+                    });
+                });
+        
+            document.getElementById('brand').addEventListener('input', function () {
+                let brand = this.value;
+                fetch(`/schedule/getModels?brand=${brand}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let modelList = document.getElementById('modelList');
+                        modelList.innerHTML = '';
+                        data.forEach(model => {
+                            let option = document.createElement('option');
+                            option.value = model;
+                            modelList.appendChild(option);
+                        });
+                    });
+            });
+        });
+        </script>
+        
+
+</body>
+</html>
