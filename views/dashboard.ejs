@@ -1,71 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>User Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            background: #333;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar h1 {
-            color: white;
-            margin: 0;
-        }
-        .menu {
-            list-style: none;
-            display: flex;
-            gap: 15px;
-        }
-        .menu li {
-            display: inline;
-        }
-        .menu a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 15px;
-            background: #555;
-            border-radius: 5px;
-        }
-        .menu a:hover {
-            background: #777;
-        }
-        .container {
-            padding: 20px;
-        }
-        .schedule {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-        }
-    </style>
+    <title>BrightCare</title>
+    <link href="/style.css" rel="stylesheet">
 </head>
-<body>
-    <div class="navbar">
-        <h1>User Dashboard</h1>
-        <ul class="menu">
-            <li><a href="/dashboard">Home</a></li>
-            <li><a href="/schedule">Schedule</a></li>
-            <li><a href="/logout">Logout</a></li>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900 p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-white text-xl font-bold"><a href="/dashboard">BrightCare</a></h1>
+        <ul class="flex space-x-4">
+            <li><a href="/cart/<%= user.id %>" class="text-white px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Cart</a></li>
+            <li><a href="/products" class="text-white px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Products</a></li>
+            <li><a href="/schedule" class="text-white px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Schedule</a></li>
+            <li><a href="/logout" class="text-white px-4 py-2 bg-red-600 rounded-md hover:bg-red-500">Logout</a></li>
         </ul>
+    </nav>
+
+    <!-- Container -->
+    <div class="container mx-auto p-6">
+        <h3 class="text-2xl font-bold text-center text-gray-800 mb-6">Your Appointments</h3>
+
+        <% if (requests && requests.length > 0) { %>
+            <div class="space-y-4">
+                <!-- Current Request -->
+                <div id="current-request" class="bg-white p-4 rounded-lg shadow-md border">
+                    <% let request = requests[0]; 
+                        let appointmentDate = new Date(request.dCreated);
+                        let formattedDate = appointmentDate.toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    %>
+                    <p class="text-lg font-semibold text-blue-700">Current Request</p>
+                    <div class="grid grid-cols-2 gap-4 text-gray-700">
+                        <p><strong>Appointment ID:</strong> REQ-<%= request.id %></p>
+                        <p><strong>Date Created:</strong> <%= formattedDate %></p>
+                        <p><strong>First Name:</strong> <%= request.first_name %></p>
+                        <p><strong>Last Name:</strong> <%= request.last_name %></p>
+                        <p><strong>Contact:</strong> <%= request.contact %></p>
+                        <p><strong>Address:</strong> <%= request.address %></p>
+                        <p><strong>Brand:</strong> <%= request.brand %></p>
+                        <p><strong>Model:</strong> <%= request.model %></p>
+                        <p><strong>Vehicle Type:</strong> <%= request.vtype %></p>
+                        <p><strong>Service Type:</strong> <%= request.stype %></p>
+                        <p><strong>Description:</strong> <%= request.des %></p>
+                        <p><strong>Status:</strong> <%= request.status %></p>
+                    </div>
+
+                    <!-- Cancel Button -->
+                    <% if (request.status !== 'Cancelled') { %>
+                        <button class="w-full bg-red-600 text-white px-4 py-2 mt-4 rounded-md hover:bg-red-700 transition duration-300"
+                            onclick="cancelAppointment('<%= request.id %>')">
+                            Cancel Appointment
+                        </button>
+                    <% } else { %>
+                        <p class="text-red-600 font-semibold mt-4">This appointment is already cancelled.</p>
+                    <% } %>
+                </div>
+
+                <!-- Other Requests (Hidden by Default) -->
+                <div id="other-requests" class="hidden space-y-4">
+                    <% requests.slice(1).forEach(request => { 
+                        let appointmentDate = new Date(request.dCreated);
+                        let formattedDate = appointmentDate.toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    %>
+                        <div class="bg-white p-4 rounded-lg shadow-md border">
+                            <p class="text-lg font-semibold text-gray-700">Other Request</p>
+                            <div class="grid grid-cols-2 gap-4 text-gray-700">
+                                <p><strong>Appointment ID:</strong> REQ-<%= request.id %></p>
+                                <p><strong>Date Created:</strong> <%= formattedDate %></p>
+                                <p><strong>First Name:</strong> <%= request.first_name %></p>
+                                <p><strong>Last Name:</strong> <%= request.last_name %></p>
+                                <p><strong>Contact:</strong> <%= request.contact %></p>
+                                <p><strong>Address:</strong> <%= request.address %></p>
+                                <p><strong>Brand:</strong> <%= request.brand %></p>
+                                <p><strong>Model:</strong> <%= request.model %></p>
+                                <p><strong>Vehicle Type:</strong> <%= request.vtype %></p>
+                                <p><strong>Service Type:</strong> <%= request.stype %></p>
+                                <p><strong>Description:</strong> <%= request.des %></p>
+                                <p><strong>Status:</strong> <%= request.status %></p>
+                            </div>
+                
+                            <!-- Cancel Button -->
+                            <% if (request.status !== 'Cancelled') { %>
+                                <button class="w-full bg-red-600 text-white px-4 py-2 mt-4 rounded-md hover:bg-red-700 transition duration-300"
+                                    onclick="cancelAppointment('<%= request.id %>')">
+                                    Cancel Appointment
+                                </button>
+                            <% } else { %>
+                                <p class="text-red-600 font-semibold mt-4">This appointment is already cancelled.</p>
+                            <% } %>
+                        </div>
+                    <% }) %>
+                </div>
+                
+
+                <!-- Toggle Button -->
+                <% if (requests.length > 1) { %>
+                    <button id="toggle-btn" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300" onclick="toggleRequests()">
+                        View Other
+                    </button>
+                <% } %>
+            </div>
+        <% } else { %>
+            <p class="text-center text-gray-600">No appointments found.</p>
+        <% } %>
     </div>
 
-    <div class="container">
-        <h2>Welcome, <%= user.fname %>!</h2>
+    <!-- Script -->
+    <script>
+        function toggleRequests() {
+            let otherRequests = document.getElementById("other-requests");
+            let toggleBtn = document.getElementById("toggle-btn");
 
-        <div class="schedule">
-            <h3>Schedule</h3>
-            <button onclick="window.location.href='/schedule'">Add Schedule</button>
+            if (otherRequests.classList.contains("hidden")) {
+                otherRequests.classList.remove("hidden");
+                toggleBtn.innerText = "Hide Other";
+            } else {
+                otherRequests.classList.add("hidden");
+                toggleBtn.innerText = "View Other";
+            }
+        }
 
-        </div>
-    </div>
+        function cancelAppointment(requestId) {
+    if (confirm("Are you sure you want to cancel this request?")) {
+        fetch(`/schedule/schedule/cancel/${requestId}`, { // Updated URL
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Request canceled successfully.");
+                location.reload();
+            } else {
+                alert("Request cancelled successfully");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        });
+    }
+}
+
+    </script>
+
 </body>
 </html>

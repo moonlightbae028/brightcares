@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Include Tailwind CSS -->
+    <script>
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll(".cart-item").forEach(item => {
+                let checkbox = item.querySelector(".select-item");
+                if (checkbox.checked) {
+                    let price = parseFloat(item.dataset.price);
+                    let qty = parseInt(item.querySelector(".qty").value);
+                    total += price * qty;
+                }
+            });
+            document.getElementById("cart-total").innerText = "₱" + total.toFixed(2);
+            
+            // Show checkout button only if at least one item is selected
+            document.getElementById("checkout-btn").style.display = total > 0 ? "block" : "none";
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-gray-900 p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-white text-xl font-bold">
+            <a href="/dashboard">BrightCare Autoparts</a>
+        </h1>
+        <ul class="flex space-x-4">
+            <li>
+                <a href="/products" class="text-white px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
+                    Products
+                </a>
+            </li>
+            <li>
+                <a href="/cart" class="text-white px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600 transition duration-300">
+                    Cart
+                </a>
+            </li>
+            <li>
+                <a href="/logout" class="text-white px-4 py-2 bg-red-600 rounded-md hover:bg-red-500 transition duration-300">
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Cart Container -->
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-bold mb-6">🛒 Your Cart</h2>
+
+        <% if (cart.length === 0) { %>
+            <!-- Empty Cart Message -->
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <p class="text-gray-600 mb-4">Your cart is empty.</p>
+                <a href="/products" class="text-blue-500 hover:underline">Go Shopping</a>
+            </div>
+        <% } else { %>
+            <!-- Cart Table -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3">
+                                <input type="checkbox" id="select-all" class="cursor-pointer" onclick="toggleAll()">
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <% cart.forEach(item => { %>
+                            <tr class="cart-item bg-white hover:bg-gray-50 transition duration-200" data-price="<%= item.price %>">
+                                <td class="px-6 py-4 text-center">
+                                    <input type="checkbox" class="select-item cursor-pointer" onchange="updateTotal()">
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900"><%= item.product_name %></td>
+                                <td class="px-6 py-4">
+                                    <img src="<%= item.image %>" alt="<%= item.product_name %>" class="w-12 h-12 rounded-md">
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900">₱<%= item.price %></td>
+                                <td class="px-6 py-4">
+                                    <input
+                                        type="number"
+                                        class="qty w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value="<%= item.quantity %>"
+                                        min="1"
+                                        onchange="updateTotal()"
+                                    >
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900">₱<%= (item.price * item.quantity).toFixed(2) %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Total Price & Checkout -->
+            <div class="mt-6 flex justify-between items-center">
+                <p class="text-lg font-semibold">
+                    Total: <span id="cart-total" class="text-blue-600">₱0.00</span>
+                </p>
+                <button id="checkout-btn" onclick="checkout()" class="px-6 py-2 bg-green-600 text-white rounded-md shadow-md hover:bg-green-500 transition duration-300">
+                    Proceed to Checkout
+                </button>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        function toggleAll() {
+            let selectAllCheckbox = document.getElementById("select-all");
+            let allCheckboxes = document.querySelectorAll(".select-item");
+            allCheckboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
+            updateTotal();
+        }
+
+        updateTotal(); // Initialize total on page load
+    </script>
+</body>
+</html>

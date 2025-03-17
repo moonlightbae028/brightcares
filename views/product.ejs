@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= product.name %> - Details</title>
+    <link href="../style.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Ensure Tailwind works -->
+</head>
+<body class="bg-gray-100 p-5 flex justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
+        <img src="<%= product.image %>" alt="Product Image" class="w-full h-56 object-cover rounded">
+        
+        <h2 class="mt-4 text-2xl font-bold text-gray-900"><%= product.name %></h2>
+        <p class="text-gray-500 text-sm">Category: <span class="font-semibold"><%= product.category %></span></p>
+        <p class="text-gray-500 text-sm">Brand: <span class="font-semibold"><%= product.brand %></span></p>
+        <p class="text-gray-500 text-sm">Model: <span class="font-semibold"><%= product.model %></span></p>
+
+        <p class="text-gray-700 text-lg mt-2">₱<%= product.price %></p>
+        <p class="text-gray-600 mt-2"><%= product.description %></p>
+        <p class="text-gray-800 font-medium mt-2">Stock Available: <%= product.stock %></p>
+        
+        <a href="/buy/<%= product.id %>" class="block mt-5 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+            Buy Now
+        </a>
+        <a href="/products" class="block mt-2 text-blue-500 hover:underline">
+            Back to Products
+        </a>
+    </div>
+</body>
+</html>

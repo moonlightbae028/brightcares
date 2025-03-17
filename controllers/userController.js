@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
+const db = require('../config/db');
+const bcrypt = require("bcrypt");
 
-// Handle user registration
 exports.registerUser = (req, res) => {
   const userData = req.body;
 
@@ -15,39 +16,32 @@ exports.registerUser = (req, res) => {
   });
 };
 
-// Handle user login with role checking
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
 
   userModel.validateUser(username, password, (err, user) => {
     if (err) {
-      console.error(err);
-      req.flash("error", "Login error occurred.");
+      console.error("Login error:", err);
+      req.flash("error", "An error occurred during login.");
       return res.redirect("/login");
     }
+
     if (!user) {
       req.flash("error", "Invalid username or password.");
       return res.redirect("/login");
     }
 
-    // Store user session
     req.session.user = {
       id: user.id,
       username: user.username,
-      role: user.role, // Store role
-      fname: user.fname
+      role: user.role,
+      fname: user.fname,
     };
 
-    console.log("User logged in:", req.session.user); // Debugging output
-
+    console.log("User logged in:", req.session.user);
     req.flash("success", `Welcome, ${user.fname}!`);
 
-    // Redirect user based on role
-    if (user.role === "admin") {
-      return res.redirect("/admin/dashboard");
-    } else {
-      return res.redirect("/dashboard");
-    }
+    return res.redirect(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
   });
 };
 

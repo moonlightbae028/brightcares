@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Approved Requests</title>
+    <link href="/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    
+  <!-- Sidebar -->
+  <div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white transform -translate-x-64 transition-transform duration-300 md:translate-x-0">
+    <div class="p-5 text-center border-b border-gray-700">
+        <h2 class="text-xl font-bold">Admin Menu</h2>
+    </div>
+    <ul class="mt-4">
+        <li class="p-4 hover:bg-gray-700">
+            <a href="#" class="flex items-center" onclick="toggleSubMenu()">
+                <span class="mr-3">📋</span> View All Requests ▼
+            </a>
+            <ul id="request-submenu" class="hidden mt-2 pl-5">
+                <li class="p-2 hover:bg-gray-700"><a href="/pending">🟡 Pending</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/approved">🟢 Approved</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=ongoing">🔵 Ongoing</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=completed">🟣 Completed</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=rejected">🔴 Rejected</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=canceled">⚫ Canceled</a></li>
+            </ul>
+        </li>
+        <li class="p-4 hover:bg-gray-700"><a href="/admin/schedule" class="flex items-center"><span class="mr-3">📅</span> Schedule</a></li>
+        <li class="p-4 hover:bg-gray-700"><a href="/logout" class="flex items-center"><span class="mr-3">🔑</span> Logout</a></li>
+    </ul>
+</div>
+    
+    <!-- Main Content -->
+    <div id="content" class="p-6 md:ml-64 transition-all duration-300">
+        <h3 class="text-2xl font-bold text-gray-800 mb-6">🟢 Approved Requests</h3>
+        
+        <table id="approvedRequestsTable" class="display w-full bg-white p-4 rounded-lg shadow-md border">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Scheduled Date</th>
+                    <th>Customer</th>
+                    <th>Contact</th>
+                    <th>Service Type</th>
+                    <th>Mechanic</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% approvedRequests.forEach(request => { %>
+                    <tr>
+                        <td>REQ-<%= request.id %></td>
+                        <td>
+                            <% if (request.scheduled_at) { %>
+                                <%= new Date(request.scheduled_at).toLocaleString('en-US', {
+                                    year: 'numeric', month: 'short', day: '2-digit',
+                                    hour: '2-digit', minute: '2-digit', hour12: true }) %>
+                            <% } else { %>
+                                <span class="text-red-500">Not Scheduled</span>
+                            <% } %>
+                        </td>
+                        
+                        <td><%= request.first_name %> <%= request.last_name %></td>
+                        <td><%= request.contact %></td>
+                        <td><%= request.stype %></td>
+                        <td>
+                            <% if (request.mechanic_id) { %>
+                                <span class="text-green-500 font-semibold">Assigned</span>
+                            <% } else { %>
+                                <a href="/admin/requests/assign-mechanic/<%= request.id %>" class="text-blue-500 hover:underline">
+                                    ➕ Assign Mechanic
+                                </a>
+                            <% } %>
+                        </td>
+                        <td>
+                            <a href="/admin/requests/schedule/<%= request.id %>" class="bg-blue-500 text-white px-3 py-1 rounded">🕒 Update Schedule</a>
+                            <a href="/admin/requests/ongoing/<%= request.id %>" class="bg-green-500 text-white px-3 py-1 rounded ml-2">🚀 Mark as Ongoing</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+         function toggleSubMenu() {
+            document.getElementById("request-submenu").classList.toggle("hidden");
+        }
+        $(document).ready(function() {
+            $('#approvedRequestsTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                order: [[1, 'desc']],
+            });
+        });
+    </script>
+    
+</body>
+</html>

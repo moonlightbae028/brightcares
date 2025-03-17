@@ -37,5 +37,40 @@ class Schedule {
         });
     }
 }
+class Appointment {
+    // Fetch appointments for a specific user
+    static async getUserAppointments(userId) {
+        try {
+            const [rows] = await db.query("SELECT * FROM requests WHERE user_id = ?", [userId]);
+            return rows;
+        } catch (error) {
+            console.error("Database Error:", error);
+            throw error;
+        }
+    }
 
-module.exports = Schedule;
+    // Cancel an appointment by ID (Only if it is pending)
+    static async cancelAppointment(appointmentId, userId) {
+        try {
+            const [result] = await db.query(
+                "UPDATE requests SET status = 'Cancelled' WHERE id = ? AND user_id = ? AND status = 'Pending'", 
+                [appointmentId, userId]
+            );
+            return result.affectedRows > 0;
+        } catch (error) {
+            console.error("Database Error:", error);
+            throw error;
+        }
+    }
+}
+class Request {
+    static async getAllRequests() {
+        try {
+            const [requests] = await db.execute("SELECT * FROM requests");
+            return requests;
+        } catch (error) {
+            throw error;
+        }
+    }
+}
+module.exports = Schedule, Appointment, Request;

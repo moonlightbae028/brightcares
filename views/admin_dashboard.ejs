@@ -2,71 +2,77 @@
 <html lang="en">
 <head>
     <title>Admin Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            background: #333;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar h1 {
-            color: white;
-            margin: 0;
-        }
-        .menu {
-            list-style: none;
-            display: flex;
-            gap: 15px;
-        }
-        .menu li {
-            display: inline;
-        }
-        .menu a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 15px;
-            background: #555;
-            border-radius: 5px;
-        }
-        .menu a:hover {
-            background: #777;
-        }
-        .container {
-            padding: 20px;
-        }
-        .schedule {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-        }
-    </style>
+    <link href="./style.css" rel="stylesheet">
 </head>
-<body>
-    <div class="navbar">
-        <h1>Admin Dashboard</h1>
-        <ul class="menu">
-            <li><a href="/admin/dashboard">Home</a></li>
-            <li><a href="/admin/users">Users</a></li>
-            <li><a href="/admin/schedule">Schedule</a></li>
-            <li><a href="/logout">Logout</a></li>
+<body class="bg-gray-100">
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white transform -translate-x-64 transition-transform duration-300 md:translate-x-0">
+        <div class="p-5 text-center border-b border-gray-700">
+            <h2 class="text-xl font-bold">Admin Menu</h2>
+        </div>
+        <ul class="mt-4">
+            <li class="p-4 hover:bg-gray-700">
+                <a href="#" class="flex items-center" onclick="toggleSubMenu()">
+                    <span class="mr-3">📋</span> View All Requests ▼
+                </a>
+                <ul id="request-submenu" class="hidden mt-2 pl-5">
+                    <li class="p-2 hover:bg-gray-700"><a href="/pending">🟡 Pending</a></li>
+                    <li class="p-2 hover:bg-gray-700"><a href="/approved">🟢 Approved</a></li>
+                    <li class="p-2 hover:bg-gray-700"><a href="/ongoing">🔵 Ongoing</a></li>
+                    <li class="p-2 hover:bg-gray-700"><a href="/requests?status=completed">🟣 Completed</a></li>
+                    <li class="p-2 hover:bg-gray-700"><a href="/requests?status=rejected">🔴 Rejected</a></li>
+                    <li class="p-2 hover:bg-gray-700"><a href="/requests?status=canceled">⚫ Canceled</a></li>
+                </ul>
+            </li>
+            <li class="p-4 hover:bg-gray-700">
+                <a href="#" class="flex items-center" onclick="toggleSubMenu1()">
+                    <span class="mr-3">📦</span> Products ▼
+                </a>
+                <ul id="product-submenu" class="hidden mt-2 pl-5">
+                    <li class="p-2 hover:bg-gray-700"><a href="/products/products">view all products</a></li>
+                    
+                </ul>
+            <li class="p-4 hover:bg-gray-700"><a href="/admin/schedule" class="flex items-center"><span class="mr-3">📅</span> Schedule</a></li>
+            <li class="p-4 hover:bg-gray-700"><a href="/logout" class="flex items-center"><span class="mr-3">🔑</span> Logout</a></li>
         </ul>
     </div>
 
-    <div class="container">
-        <h2>Welcome Admin, <%= user.fname %>!</h2>
+    <!-- Navbar -->
+    <div class="bg-gray-800 text-white flex items-center justify-between px-5 py-4 md:ml-64">
+        <button id="menu-toggle" class="text-2xl md:hidden">☰</button>
+        <h1 class="text-xl font-semibold">Admin Dashboard</h1>
+    </div>
 
-        <div class="schedule">
-            <h3>Schedule</h3>
-            <p>No scheduled events yet.</p>
-            <button onclick="alert('Add Schedule Feature Coming Soon!')">Add Schedule</button>
+    <!-- Main Content -->
+    <div id="content" class="p-6 md:ml-64 transition-all duration-300">
+        <h2 class="text-2xl font-semibold mb-4">Welcome Admin!</h2>
+
+        <!-- Requests Section -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h3 class="text-xl font-semibold flex items-center mb-2">
+                <span class="mr-2">📋</span> View All Requests
+            </h3>
+            <p class="text-gray-600">Manage and review all user requests.</p>
+
+            <!-- Status Filter Tabs -->
+            <div class="mt-4 flex flex-wrap gap-2">
+                <a href="/pending" class="px-4 py-2 bg-yellow-500 text-white rounded-lg">🟡 Pending</a>
+                
+            </div>
+
+            <!-- Requests Table -->
+           
         </div>
     </div>
+
+    <script>
+        function toggleSubMenu() {
+            document.getElementById("request-submenu").classList.toggle("hidden");
+        }
+        function toggleSubMenu1() {
+            document.getElementById("product-submenu").classList.toggle("hidden");
+        }
+    </script>
 </body>
 </html>

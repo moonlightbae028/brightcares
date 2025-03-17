@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Products</title>
+    <link href="/style.css" rel="stylesheet">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+    <!-- jQuery and DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        function toggleSubMenu() {
+            document.getElementById("request-submenu").classList.toggle("hidden");
+        }
+        function toggleSubMenu1() {
+            document.getElementById("product-submenu").classList.toggle("hidden");
+        }
+        $(document).ready(function () {
+            $('#productsTable').DataTable({
+                "pageLength": 10,  // Show 10 products per page
+                "lengthMenu": [5, 10, 25, 50, 100], // Page size options
+                "ordering": true,  // Enable sorting
+                "searching": true, // Enable search
+                "responsive": true // Adjusts for mobile views
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-100 font-sans">
+    
+  <!-- Sidebar -->
+  <div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white transform -translate-x-64 transition-transform duration-300 md:translate-x-0">
+    <div class="p-5 text-center border-b border-gray-700">
+        <h2 class="text-xl font-bold">Admin Menu</h2>
+    </div>
+    <ul class="mt-4">
+        <li class="p-4 hover:bg-gray-700">
+            <a href="#" class="flex items-center" onclick="toggleSubMenu()">
+                <span class="mr-3">📋</span> View All Requests ▼
+            </a>
+            <ul id="request-submenu" class="hidden mt-2 pl-5">
+                <li class="p-2 hover:bg-gray-700"><a href="/pending">🟡 Pending</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/approved">🟢 Approved</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=ongoing">🔵 Ongoing</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=completed">🟣 Completed</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=rejected">🔴 Rejected</a></li>
+                <li class="p-2 hover:bg-gray-700"><a href="/requests?status=canceled">⚫ Canceled</a></li>
+            </ul>
+            <li class="p-4 hover:bg-gray-700">
+                <a href="#" class="flex items-center" onclick="toggleSubMenu1()">
+                    <span class="mr-3">📦</span> Products ▼
+                </a>
+                <ul id="product-submenu" class="hidden mt-2 pl-5">
+                    <li class="p-2 hover:bg-gray-700"><a href="/products/products">view all products</a></li>
+                    
+                </ul>
+        </li>
+        <li class="p-4 hover:bg-gray-700"><a href="/admin/schedule" class="flex items-center"><span class="mr-3">📅</span> Schedule</a></li>
+        <li class="p-4 hover:bg-gray-700"><a href="/logout" class="flex items-center"><span class="mr-3">🔑</span> Logout</a></li>
+    </ul>
+</div>
+
+<!-- Content -->
+<div id="content" class="p-6 md:ml-64 transition-all duration-300">
+    <h1 class="text-2xl font-bold mb-4">All Products</h1>
+    <a href="/admin/products/add" class="bg-blue-500 text-white px-4 py-2 rounded-md">Add New Product</a>
+
+    <div class="mt-6">
+        <table id="productsTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% products.forEach(product => { %>
+                    <tr>
+                        <td><%= product.id %></td>
+                        <td><%= product.name %></td>
+                        <td>₱<%= product.price %></td>
+                        <td><%= product.description %></td>
+                        <td><%= product.category %></td>
+                        <td><%= product.stock %></td>
+                        <td>
+                            <% if (product.image) { %>
+                                <img src="<%= product.image %>" width="50">
+                            <% } else { %>
+                                No Image
+                            <% } %>
+                        </td>
+                        <td>
+                            <a href="/products/<%= product.id %>" class="text-blue-500">View</a> |
+                            <a href="/admin/products/update/<%= product.id %>" class="text-yellow-500">Edit</a> |
+                            <a href="/products/delete/<%= product.id %>" onclick="return confirm('Are you sure?')" class="text-red-500">Delete</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

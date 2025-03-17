@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Products</title>
+    <link href="./style.css" rel="stylesheet">
+    <script>
+        function showPopup(message) {
+            let popupContainer = document.createElement("div");
+            popupContainer.className = "popup-container";
+
+            let popupBox = document.createElement("div");
+            popupBox.className = "popup-box";
+
+            let popupMessage = document.createElement("p");
+            popupMessage.textContent = message;
+
+            popupBox.appendChild(popupMessage);
+            popupContainer.appendChild(popupBox);
+            document.body.appendChild(popupContainer);
+
+            // Fade out after 1 second
+            setTimeout(() => {
+                popupContainer.style.opacity = "0";
+                setTimeout(() => popupContainer.remove(), 300);
+            }, 1000);
+        }
+    </script>
+    <style>
+        /* Popup Container */
+        .popup-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 30px;
+            border-radius: 10px;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Popup Box */
+        .popup-box {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="bg-gray-900 p-4 flex justify-between items-center shadow-md">
+    <h1 class="text-white text-xl font-bold"><a href="/dashboard">BrightCare Autoparts</a></h1>
+    <ul class="flex space-x-4">
+        <li><a href="/products" class="text-white px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Product</a></li>
+        <li><a href="/schedule" class="text-white px-4 py-2 bg-gray-700 rounded-md hover:bg-gray-600">Schedule</a></li>
+        <li><a href="/logout" class="text-white px-4 py-2 bg-red-600 rounded-md hover:bg-red-500">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="bg-gray-100 p-5 flex flex-wrap justify-center gap-5">
+    
+    <% products.forEach(product => { %>
+        <div class="bg-white p-4 rounded-lg shadow-md w-64 text-center">
+            <a href="/product/<%= product.id %>">
+                <img src="<%= product.image %>" alt="Product Image" class="w-full h-40 object-cover rounded">
+                <h3 class="mt-3 text-lg font-semibold"><%= product.name %></h3>
+            </a>
+            <p class="text-gray-600 text-sm mt-1">₱<%= product.price %></p>
+            <p class="text-gray-500 text-sm mt-2"><%= product.description.substring(0, 50) %>...</p>
+            
+            <% if (product.stock === 0) { %>
+                <p class="text-red-500 font-bold mt-2">Sold Out</p>
+                <!-- Disable Buy and Add to Cart buttons -->
+                <button class="block mt-3 bg-gray-400 text-white py-2 px-4 rounded cursor-not-allowed" disabled>Buy</button>
+                <button class="block mt-2 bg-gray-400 text-white py-2 px-4 rounded cursor-not-allowed" disabled>Add to Cart</button>
+            <% } else { %>
+                <p class="text-gray-700 font-medium mt-2">Quantity: <%= product.stock %> available</p>
+                <!-- Buy Button -->
+                <a href="/checkout/<%= product.id %>" class="block mt-3 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Buy</a>
+                
+                <!-- Add to Cart Button -->
+                <form action="/cart/add/<%= product.id %>" method="POST"
+                      onsubmit="event.preventDefault(); showPopup('Successfully added to cart!'); setTimeout(() => this.submit(), 1000);">
+                    <button type="submit" class="block mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                        Add to Cart
+                    </button>
+                </form>
+            <% } %>
+        </div>
+    <% }) %>
+    
+</div>
+</body>
+</html>

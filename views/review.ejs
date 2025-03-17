@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Review Order</title>
+    <link href="/style.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-5 flex flex-col items-center">
+    <div class="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 class="text-xl font-bold">Review Your Order</h2>
+
+        <h3 class="mt-3 text-lg font-semibold">Shipping Details</h3>
+        <p><strong>Name:</strong> <%= user.first_name %> <%= user.last_name %></p>
+        <p><strong>Contact:</strong> <%= user.contact %></p>
+        <p><strong>Address:</strong> <%= user.address %></p>
+
+        <h3 class="mt-4 text-lg font-semibold">Product Details</h3>
+        <img src="<%= product.image %>" alt="Product Image" class="w-full h-40 object-cover rounded">
+        <p class="text-gray-800"><%= product.name %></p>
+        <p class="text-gray-600">₱<%= product.price %></p>
+        <p class="text-gray-500"><%= product.description %></p>
+
+        <h3 class="mt-4 text-lg font-semibold">Choose Delivery Method</h3>
+        <form action="/checkout" method="POST">
+            <input type="hidden" name="productId" value="<%= product.id %>">
+            <label class="block mt-2">
+                <input type="radio" name="deliveryMethod" value="Pickup" required> Pickup
+            </label>
+            <label class="block mt-2">
+                <input type="radio" name="deliveryMethod" value="COD" required> Cash on Delivery (COD)
+            </label>
+
+            <h3 class="mt-4 text-lg font-semibold">Order Summary</h3>
+            <p><strong>Total Price:</strong> ₱<%= product.price %></p>
+
+            <button type="submit" class="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 w-full">Proceed to Checkout</button>
+        </form>
+    </div>
+</body>
+</html>

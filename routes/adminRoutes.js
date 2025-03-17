@@ -1,40 +1,47 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const userController = require("../controllers/userController");
 
-// Middleware to check if user is logged in
-function isLoggedIn(req, res, next) {
-  if (!req.session.user) {
-    req.flash("error", "Please log in first.");
-    return res.redirect("/login");
-  }
-  next();
-}
+const adminController = require('../controllers/adminController');
 
-// Middleware to check if user is an admin
-function isAdmin(req, res, next) {
-  if (!req.session.user || req.session.user.role !== "admin") {
-    req.flash("error", "Unauthorized access.");
-    return res.redirect("/dashboard");
-  }
-  next();
-}
+router.get('/requests', adminController.getAllRequests);
+// View Pending Requests
+router.get("/pending", adminController.viewPendingRequests);
 
-// Login & Registration Routes
-router.get("/register", (req, res) => res.render("register", { messages: req.flash() }));
-router.post("/register", userController.registerUser);
-router.get("/login", (req, res) => res.render("login", { messages: req.flash() }));
-router.post("/login", userController.loginUser);
-router.get("/logout", userController.logoutUser);
+// Approve Request
+router.post("/admin/requests/approve/:id", adminController.approveRequest);
+router.get("/approved", adminController.viewApprovedRequests);
 
-// User Dashboard
-router.get("/dashboard", isLoggedIn, (req, res) => {
-  res.render("dashboard", { user: req.session.user });
+// Reject Request
+router.post("/admin/requests/reject/:id", adminController.rejectRequest);
+
+// Approve & Schedule Request ✅
+router.post("/admin/requests/approve/:id", adminController.approveRequest);
+
+// Assign Mechanic ✅
+router.post("/admin/requests/assign/:id", adminController.assignMechanic);
+
+// Update Schedule ✅
+router.post("/admin/requests/update-schedule/:id", adminController.updateSchedule);
+
+// Mark as Ongoing ✅
+//router.post("/admin/requests/ongoing/:id", adminController.markAsOngoing);
+//router.get("/admin/requests/approved", adminController.viewApprovedRequests);
+
+router.get("/products/products", adminController.getAllProducts);
+
+// Get a single product by ID
+router.get('products/:id', adminController.getProductById);
+router.get('/admin/products/add', (req, res) => {
+    res.render('admin/products/add'); // Correct view path
 });
 
-// Admin Dashboard
-router.get("/admin/dashboard", isLoggedIn, isAdmin, (req, res) => {
-  res.render("admin_dashboard", { user: req.session.user });
-});
+// Add a new product
+router.post('/admin/products/add', adminController.addProduct);
+router.get('/admin/products/update/:id', adminController.showUpdateForm);
+// Update an existing product
+router.post('/admin/products/update/:id', adminController.updateProduct);
+
+// Delete a product
+router.get('/admin/delete/:id', adminController.deleteProduct);
 
 module.exports = router;

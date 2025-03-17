@@ -56,4 +56,12 @@ exports.validateUser = (username, password, callback) => {
     // Return user details, including role
     callback(null, user);
   });
+  exports.getUserById = (userId, callback) => {
+    const sql = "SELECT * FROM users WHERE id = ?";
+    db.query(sql, [userId], (err, results) => {
+      if (err) return callback(err, null);
+      if (results.length === 0) return callback(null, null);
+      callback(null, results[0]);
+    });
+  };
 };
